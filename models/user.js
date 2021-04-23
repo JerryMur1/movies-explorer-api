@@ -1,9 +1,8 @@
-/* eslint-disable consistent-return */
 const isEmail = require('validator/lib/isEmail');
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-  name: { // у пользователя есть имя — опишем требования к имени в схеме:
+  name: {
     type: String,
     minlength: 2,
     maxlength: 30,

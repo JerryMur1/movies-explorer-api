@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-unused-vars */
 function errorHandler(err, req, res, next) {
   if (err.name === 'ValidationError' || err.name === 'CastError') {
     err.statusCode = 400;

@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
@@ -37,33 +38,30 @@ const login = (req, res, next) => {
   UserModel.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        res.status(401).send({ message: 'Такого пользователя в базе нет' });
+        return res.status(401).send({ message: 'Такого пользователя в базе нет' });
       }
       bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            res.status(401).send({ message: 'Такого пользователя в базе нет' });
+            return res.status(401).send({ message: 'Такого пользователя в базе нет' });
           }
 
           const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'super-strong-secret', { expiresIn: '7d' });
-          res.send({ token });
+          return res.send({ token });
         });
     })
     .catch(next);
 };
 
-// eslint-disable-next-line consistent-return
 const createUser = (req, res, next) => {
   const { email, password, name } = req.body;
 
   if (!email || !password || !name) {
-    return res.status(404).send({ message: 'Нет емейла, пароля или имени' });
+    res.status(404).send({ message: 'Нет емейла, пароля или имени' });
   }
   bcrypt.hash(password, SALT_ROUNDS)
     .then((hash) => UserModel.create({ email, name, password: hash }))
-    .then(() => {
-      res.status(200).send({ message: 'Пользователь создан' });
-    })
+    .then(() => res.status(200).send({ message: 'Пользователь создан' }))
     .catch(next);
 };
 

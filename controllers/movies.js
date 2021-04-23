@@ -1,8 +1,9 @@
 const MoviesModel = require('../models/movies');
 
 const NotFoundError = require('../errors/error.js');
+const { NewError } = require('../errors/NewError');
 
-const getMovies = (req, res, next) => MoviesModel.find({ owner: req.user._id })
+const getMovies = (req, res, next) => MoviesModel.find({ owner: req.user }).select('-owner')
   .then((movies) => res.status(200).send(movies))
   .catch(next);
 
@@ -23,19 +24,28 @@ const postMovie = (req, res, next) => {
     nameRU,
     nameEN,
     movieId,
-    owner: req.user._id,
+    owner: req.user,
   })
-    .then((movie) => res.status(200).send(movie))
+    .then(() => res.status(200).send({ message: 'Фильм создан' }))
     .catch(next);
 };
 
 const deleteMovie = (req, res, next) => {
+  const { _id } = req.user;
   const { movieId } = req.params;
-  const { owner } = req.user._id;
-  MoviesModel.findById(owner);
-  MoviesModel.findByIdAndRemove(movieId)
+  MoviesModel.findById(movieId)
     .orFail(() => { throw new NotFoundError('Такого фильма в базе нет'); })
-    .then((card) => res.status(200).send(card))
+    .then((movie) => {
+      if (JSON.stringify(movie.owner) !== JSON.stringify(_id)) {
+        throw new NewError('Удалять можно только свои фильмы');
+      } else {
+        movie.remove()
+          .then(() => {
+            res.send({ message: 'Фильм успешно удален' });
+          })
+          .catch(next);
+      }
+    })
     .catch(next);
 };
 module.exports = {
