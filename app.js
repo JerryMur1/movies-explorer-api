@@ -3,13 +3,13 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3000, DATA_BASE = 'mongodb://localhost:27017/moviesdb' } = process.env;
 const { errorHandler } = require('./errors/centralError');
 
 const app = express();
 const { auth } = require('./middlewares/auth');
 
-mongoose.connect('mongodb://localhost:27017/moviesdb', {
+mongoose.connect(DATA_BASE, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
