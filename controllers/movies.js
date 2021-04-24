@@ -1,6 +1,7 @@
 const MoviesModel = require('../models/movies');
 
 const NotFoundError = require('../errors/error.js');
+
 const { NewError } = require('../errors/NewError');
 
 const getMovies = (req, res, next) => MoviesModel.find({ owner: req.user }).select('-owner')
