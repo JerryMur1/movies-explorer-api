@@ -16,8 +16,7 @@ router.post('/movies',
       nameRU: Joi.string().required().min(2),
       nameEN: Joi.string().required().min(2),
       thumbnail: Joi.string().required().min(2).pattern(new RegExp(/w*[\da-zA-Z\W]+#?/)),
-      movieId: Joi.string().required().min(2).length(24)
-        .hex(),
+      movieId: Joi.number().required().label('id'),
       owner: Joi.string().required().min(2),
     }),
   }), postMovie);
