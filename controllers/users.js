@@ -57,7 +57,7 @@ const createUser = (req, res, next) => {
   const { email, password, name } = req.body;
 
   if (!email || !password || !name) {
-    res.status(404).send({ message: 'Нет емейла, пароля или имени' });
+    res.status(400).send({ message: 'Нет емейла, пароля или имени' });
   }
   bcrypt.hash(password, SALT_ROUNDS)
     .then((hash) => UserModel.create({ email, name, password: hash }))
